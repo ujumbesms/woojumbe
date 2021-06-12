@@ -121,7 +121,7 @@ class sms_class{
 				
                 'css'   => 'width: 400px;
 							min-height: 100px;',
-				'default' => 'Dear {BILLING_FNAME}, thank you for shopping from {SHOP_NAME}. your bill is {ORDER_AMOUNT}'
+				'default' => 'Dear {BILLING_FNAME}, thank you for shopping at {SHOP_NAME}. Your total order is  {CURRENCY_NAME} {ORDER_AMOUNT} and your delivery is underway.'
             ),
 			
             'customer_message_processed_switch' => array(
@@ -141,7 +141,7 @@ class sms_class{
                 'css'   => 'width: 400px;
 							min-height: 100px;',
 				'desc_tip' => true,
-				'default' => 'Dear {BILLING_FNAME}. your order from {ORDER_DATE} is {ORDER_STATUS}'
+				'default' => 'Dear {BILLING_FNAME}. The order made on {ORDER_DATE} is {ORDER_STATUS}'
             ),
             'section_end2' => array(
                  'type' => 'sectionend',
