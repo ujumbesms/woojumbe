@@ -91,6 +91,14 @@ class sms_class{
                 'desc' => __( 'Provide your UjumbeSMS API Key', 'SMS-Settings' ),
                 'id'   => 'wc_SMS_Settings_password'
             ),
+
+			'sender_id' => array(
+                'name' => __( 'Your Sender ID', 'SMS-Settings' ),
+                'type' => 'text',
+                'desc' => __( 'Your default sender ID. Ensure to place the correct case and spelling', 'SMS-Settings' ),
+                'id'   => 'wc_SMS_Settings_sender_id'
+            ),
+          
           
 			'section_end' => array(
                  'type' => 'sectionend',
@@ -121,7 +129,7 @@ class sms_class{
 				
                 'css'   => 'width: 400px;
 							min-height: 100px;',
-				'default' => 'Dear {BILLING_FNAME}, thank you for shopping at {SHOP_NAME}. Your total order is  {CURRENCY_NAME} {ORDER_AMOUNT} and your delivery is underway.'
+				'default' => 'Dear {BILLING_FNAME}, thank you for shopping from {SHOP_NAME}. your bill is {ORDER_AMOUNT}'
             ),
 			
             'customer_message_processed_switch' => array(
@@ -141,7 +149,7 @@ class sms_class{
                 'css'   => 'width: 400px;
 							min-height: 100px;',
 				'desc_tip' => true,
-				'default' => 'Dear {BILLING_FNAME}. The order made on {ORDER_DATE} is {ORDER_STATUS}'
+				'default' => 'Dear {BILLING_FNAME}. your order from {ORDER_DATE} is {ORDER_STATUS}'
             ),
             'section_end2' => array(
                  'type' => 'sectionend',
@@ -168,6 +176,7 @@ class sms_class{
 	
 	$SMS_admin_username=get_option( 'wc_SMS_Settings_username', true );
 	$SMS_admin_password=get_option( 'wc_SMS_Settings_password', true );
+	$sender_id = get_option( 'wc_SMS_Settings_sender_id', true );
 	
 	//$SMS_send_Processed=get_option( 'customer_message_processed_Switch', true );
 	$SMS_send_Checkuot=get_option( 'wc_SMS_Settings_checkout_Switch', true );
@@ -189,7 +198,7 @@ class sms_class{
 		} else {
 			//first time visit after checkout 
 			self::sendText($SMS_admin_username,$SMS_admin_password,
-			self::tokenizeSMS($SMS_admin_checkout,$order),$billing_phone, $order);
+			self::tokenizeSMS($SMS_admin_checkout,$order),$billing_phone, $sender_id, $order);
 	
 		}	
 	}
@@ -213,7 +222,7 @@ class sms_class{
 	
 	$SMS_admin_username=get_option( 'wc_SMS_Settings_username', true );
 	$SMS_admin_password=get_option( 'wc_SMS_Settings_password', true );
-	
+	$sender_id = get_option( 'wc_SMS_Settings_sender_id', true );
 	$SMS_send_Processed=get_option( 'customer_message_processed_Switch', true );
 	
 	
@@ -225,7 +234,7 @@ class sms_class{
 	
 	if(isset($billing_phone) and strlen($billing_phone)>0 and $SMS_send_Processed=="yes"){
 	self::sendText($SMS_admin_username,$SMS_admin_password,
-	self::tokenizeSMS($SMS_admin_delivered,$order),$billing_phone, $order);
+	self::tokenizeSMS($SMS_admin_delivered,$order),$billing_phone, $sender_id, $order);
 		
 	}
 	
@@ -338,29 +347,12 @@ class sms_class{
 		
 	  
   }
-  public static function sendText($user,$pass,$message,$billing_phone, $order){
+  public static function sendText($user,$pass,$message,$billing_phone, $sender_id, $order){
 	
-	
-	/*
-	sending SMS through curl
- 
-	 */
-		
-		
-		// $param="user=$user&pass=$pass&sms[0][0]=$billing_phone&sms[0][1]=".urlencode($message)."&sms[0][2]=$sid".time()."&sid=$sid";
-		// $crl = curl_init();
-		// curl_setopt($crl,CURLOPT_SSL_VERIFYPEER,FALSE);
-		// curl_setopt($crl,CURLOPT_SSL_VERIFYHOST,2);
-		// curl_setopt($crl,CURLOPT_URL,$url);
-		// curl_setopt($crl,CURLOPT_HEADER,0);
-		// curl_setopt($crl,CURLOPT_RETURNTRANSFER,1);
-		// curl_setopt($crl,CURLOPT_POST,1);
-		// curl_setopt($crl,CURLOPT_POSTFIELDS,$param);
-		// $response = curl_exec($crl);
-		// curl_close($crl);
+
 
 		$gateway =  new UjumbeSMS_Gateway($pass, $user);
-		$response = $gateway->send($billing_phone, $message, "");
+		$response = $gateway->send($billing_phone, $message, $sender_id);
 		 
 		//echo $message; 
 		
